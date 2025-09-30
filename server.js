@@ -30,6 +30,36 @@ const pool = mysql.createPool({
     queueLimit: 0
 });
 
+
+// Test database connection
+pool.getConnection((err, connection) => {
+  if (err) {
+    console.error('❌ Database connection failed:', err.message);
+    console.error('Error code:', err.code);
+    process.exit(1); // Exit if database connection fails
+  }
+  
+  console.log('✅ Database connected successfully');
+  console.log(`📊 Connected to database: ${process.env.DB_NAME || 'simotex'}`);
+  console.log(`🖥️  Host: ${process.env.DB_HOST || 'localhost'}`);
+  
+  connection.release(); // Release the connection back to the pool
+});
+
+// Handle pool errors
+pool.on('error', (err) => {
+  console.error('❌ Unexpected database error:', err);
+  if (err.code === 'PROTOCOL_CONNECTION_LOST') {
+    console.error('Database connection was closed.');
+  }
+  if (err.code === 'ER_CON_COUNT_ERROR') {
+    console.error('Database has too many connections.');
+  }
+  if (err.code === 'ECONNREFUSED') {
+    console.error('Database connection was refused.');
+  }
+});
+
 // Make db available in routes
 app.use((req, res, next) => {
     req.db = pool;
@@ -80,7 +110,7 @@ app.use((req, res, next) => {
     }
 });
 
-const PORT = process.env.PORT || 3000;
+const PORT = 3000;
 app.listen(PORT, () => {
     console.log(`Server running on port ${PORT}`);
 });
