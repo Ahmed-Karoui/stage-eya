@@ -82,7 +82,7 @@ app.use((req, res, next) => {
   }
 });
 
-/console.log('⚡ Booting Express server...');
+console.log('⚡ Booting Express server...');
 
 app.listen(PORT, async () => {
   console.log(`🚀 Server running on port ${PORT}`);
