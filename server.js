@@ -11,14 +11,11 @@ const productionLineRoutes = require('./routes/productionLines');
 
 const app = express();
 
-// Middleware
 app.use(cors());
 app.use(express.json());
 app.use(express.static(path.join(__dirname, '..')));
 
-console.log("✅ server.js started");
-
-// ✅ Database pool (create before server starts)
+// ✅ Database pool
 const pool = mysql.createPool({
   host: process.env.DB_HOST || 'localhost',
   user: process.env.DB_USER || 'if0_40054476',
@@ -29,18 +26,17 @@ const pool = mysql.createPool({
   queueLimit: 0
 });
 
-// ✅ Make db available in all routes
+// ✅ Attach pool
 app.use((req, res, next) => {
   req.db = pool;
   next();
 });
 
-// ✅ Root endpoint (must be before app.listen)
+// ✅ Routes
 app.get('/', (req, res) => {
   res.send('<h1>✅ Application is running!</h1><p>Welcome to SIMOTEX backend server.</p>');
 });
 
-// API documentation
 app.get('/api', (req, res) => {
   res.json({
     message: 'SIMOTEX API is running',
@@ -53,47 +49,17 @@ app.get('/api', (req, res) => {
   });
 });
 
-// ✅ Mount routes
 app.use('/api/auth', authRoutes);
 app.use('/api/orders', orderRoutes);
 app.use('/api/defects', defectRoutes);
 app.use('/api/chaines', productionLineRoutes);
 app.use('/api/production-lines', productionLineRoutes);
 
-// ✅ Error handling middleware
+// ✅ Error handling
 app.use((err, req, res, next) => {
   console.error(err.stack);
-  res.status(500).json({
-    error: 'Internal Server Error',
-    message: process.env.NODE_ENV === 'development' ? err.message : undefined
-  });
+  res.status(500).json({ error: 'Internal Server Error' });
 });
 
-// ✅ 404 fallback
-app.use((req, res, next) => {
-  if (req.path.startsWith('/api')) {
-    res.status(404).json({ error: 'API endpoint not found' });
-  } else if (req.path.endsWith('.html')) {
-    res.sendFile(path.join(__dirname, '..', req.path), err => {
-      if (err) {
-        res.status(404).sendFile(path.join(__dirname, '..', 'login.html'));
-      }
-    });
-  } else {
-    res.sendFile(path.join(__dirname, '..', 'login.html'));
-  }
-});
-const PORT = process.env.PORT || 3000;
-console.log('⚡ Booting Express server...');
-app.listen(PORT, async () => {
-  console.log(`🚀 Server running on port ${PORT}`);
-
-  try {
-    const connection = await pool.getConnection();
-    console.log('✅ Database connected successfully!');
-    connection.release();
-  } catch (err) {
-    console.error('❌ Database connection failed!');
-    console.error(err);
-  }
-});
+// ✅ Export the Express app instead of listening
+module.exports = app;
