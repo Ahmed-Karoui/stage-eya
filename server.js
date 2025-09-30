@@ -12,10 +12,17 @@ const productionLineRoutes = require('./routes/productionLines');
 
 const app = express();
 
+
+
 // Middleware
 app.use(cors());
 app.use(express.json());
 app.use(express.static(path.join(__dirname, '..')));
+
+const PORT = process.env.PORT || 3000;
+
+app.listen(PORT, async () => {
+  console.log(`🚀 Server running on port ${PORT}`);
 
 // Database connection (promise-based)
 const pool = mysql.createPool({
@@ -37,6 +44,7 @@ app.use((req, res, next) => {
 // Root endpoint
 app.get('/', (req, res) => {
   res.send('<h1>✅ Application is running!</h1><p>Welcome to SIMOTEX backend server.</p>');
+    console.log(`🚀 Server running on port ${PORT}`);
 });
 
 // API documentation
@@ -83,10 +91,6 @@ app.use((req, res, next) => {
   }
 });
 
-const PORT = process.env.PORT || 3000;
-
-app.listen(PORT, async () => {
-  console.log(`🚀 Server running on port ${PORT}`);
 
   // ✅ Properly test DB connection with async/await
   try {
