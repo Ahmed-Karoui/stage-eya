@@ -36,6 +36,12 @@ app.use((req, res, next) => {
     next();
 });
 
+
+// Root endpoint - show app status
+app.get('/', (req, res) => {
+    res.send('<h1>✅ Application is running!</h1><p>Welcome to SIMOTEX backend server.</p>');
+});
+
 // API documentation route
 app.get('/api', (req, res) => {
     res.json({
