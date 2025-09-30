@@ -4,7 +4,6 @@ const mysql = require('mysql2/promise');
 const path = require('path');
 require('dotenv').config();
 
-// Import routes
 const authRoutes = require('./routes/auth');
 const orderRoutes = require('./routes/controlOrders');
 const defectRoutes = require('./routes/defects');
@@ -12,19 +11,12 @@ const productionLineRoutes = require('./routes/productionLines');
 
 const app = express();
 
-
-
 // Middleware
 app.use(cors());
 app.use(express.json());
 app.use(express.static(path.join(__dirname, '..')));
 
-const PORT = process.env.PORT || 3000;
-
-app.listen(PORT, async () => {
-  console.log(`🚀 Server running on port ${PORT}`);
-
-// Database connection (promise-based)
+// ✅ Database pool (create before server starts)
 const pool = mysql.createPool({
   host: process.env.DB_HOST || 'localhost',
   user: process.env.DB_USER || 'if0_40054476',
@@ -35,16 +27,15 @@ const pool = mysql.createPool({
   queueLimit: 0
 });
 
-// Make db available in routes
+// ✅ Make db available in all routes
 app.use((req, res, next) => {
   req.db = pool;
   next();
 });
 
-// Root endpoint
+// ✅ Root endpoint (must be before app.listen)
 app.get('/', (req, res) => {
   res.send('<h1>✅ Application is running!</h1><p>Welcome to SIMOTEX backend server.</p>');
-    console.log(`🚀 Server running on port ${PORT}`);
 });
 
 // API documentation
@@ -60,14 +51,14 @@ app.get('/api', (req, res) => {
   });
 });
 
-// Mount routes
+// ✅ Mount routes
 app.use('/api/auth', authRoutes);
 app.use('/api/orders', orderRoutes);
 app.use('/api/defects', defectRoutes);
 app.use('/api/chaines', productionLineRoutes);
-app.use('/api/production-lines', require('./routes/productionLines'));
+app.use('/api/production-lines', productionLineRoutes);
 
-// Error handling middleware
+// ✅ Error handling middleware
 app.use((err, req, res, next) => {
   console.error(err.stack);
   res.status(500).json({
@@ -76,7 +67,7 @@ app.use((err, req, res, next) => {
   });
 });
 
-// 404 handling
+// ✅ 404 fallback
 app.use((req, res, next) => {
   if (req.path.startsWith('/api')) {
     res.status(404).json({ error: 'API endpoint not found' });
@@ -91,8 +82,12 @@ app.use((req, res, next) => {
   }
 });
 
+// ✅ Start server (after everything is defined)
+const PORT = process.env.PORT || 3000;
+app.listen(PORT, async () => {
+  console.log(`🚀 Server running on port ${PORT}`);
 
-  // ✅ Properly test DB connection with async/await
+  // Test database connection
   try {
     const connection = await pool.getConnection();
     console.log('✅ Database connected successfully!');
