@@ -21,13 +21,23 @@ app.use(express.static(path.join(__dirname, '..')));
 
 // Database connection
 const pool = mysql.createPool({
-    host: process.env.DB_HOST || 'localhost',
-    user: process.env.DB_USER || 'root',
-    password: process.env.DB_PASSWORD || 'eya123eya123',
-    database: process.env.DB_NAME || 'simotex',
+    host: process.env.DB_HOST || 'sql110.infinityfree.com',
+    user: process.env.DB_USER || 'if0_40054476',
+    password: process.env.DB_PASSWORD || 'AhmedKaroui1995',
+    database: process.env.DB_NAME || 'if0_40054476_simotex',
     waitForConnections: true,
     connectionLimit: 10,
     queueLimit: 0
+});
+
+// Test the connection when the server starts
+pool.getConnection((err, connection) => {
+    if (err) {
+        console.error('❌ Database connection failed:', err.message);
+    } else {
+        console.log('✅ Successfully connected to the database!');
+        connection.release(); // release the connection back to the pool
+    }
 });
 
 // Make db available in routes
@@ -35,6 +45,7 @@ app.use((req, res, next) => {
     req.db = pool;
     next();
 });
+
 
 
 // Root endpoint - show app status
