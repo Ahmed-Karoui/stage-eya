@@ -89,4 +89,18 @@ app.use((req, res, next) => {
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {
     console.log(`Server running on port ${PORT}`);
+
+  // THEN test database connection
+  pool.getConnection((err, connection) => {
+    if (err) {
+      console.error('Database connection failed:', err.message);
+      console.error('Error code:', err.code);
+    } else {
+      console.log('Database connected successfully');
+      console.log(`Connected to database: ${process.env.DB_NAME || 'simotex'}`);
+      console.log(`Host: ${process.env.DB_HOST || 'localhost'}`);
+      connection.release();
+    }
+  });
+    
 });
