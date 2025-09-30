@@ -16,6 +16,8 @@ app.use(cors());
 app.use(express.json());
 app.use(express.static(path.join(__dirname, '..')));
 
+console.log("✅ server.js started");
+
 // ✅ Database pool (create before server starts)
 const pool = mysql.createPool({
   host: process.env.DB_HOST || 'localhost',
