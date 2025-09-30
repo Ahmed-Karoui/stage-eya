@@ -19,7 +19,7 @@ app.use(express.static(path.join(__dirname, '..')));
 
 // Database connection (promise-based)
 const pool = mysql.createPool({
-  host: process.env.DB_HOST || 'sql110.infinityfree.com',
+  host: process.env.DB_HOST || 'localhost',
   user: process.env.DB_USER || 'if0_40054476',
   password: process.env.DB_PASSWORD || 'AhmedKaroui1995',
   database: process.env.DB_NAME || 'if0_40054476_simotex',
