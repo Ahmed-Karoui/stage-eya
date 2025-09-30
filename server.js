@@ -81,9 +81,8 @@ app.use((req, res, next) => {
     res.sendFile(path.join(__dirname, '..', 'login.html'));
   }
 });
-
+const PORT = process.env.PORT || 3000;
 console.log('⚡ Booting Express server...');
-
 app.listen(PORT, async () => {
   console.log(`🚀 Server running on port ${PORT}`);
 
