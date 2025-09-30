@@ -82,25 +82,17 @@ app.use((req, res, next) => {
   }
 });
 
-// ✅ Start server (after everything is defined)
-const PORT = process.env.PORT || 3000;
+/console.log('⚡ Booting Express server...');
+
 app.listen(PORT, async () => {
   console.log(`🚀 Server running on port ${PORT}`);
 
-  // Test database connection
   try {
     const connection = await pool.getConnection();
     console.log('✅ Database connected successfully!');
-    console.log(`📂 Database: ${process.env.DB_NAME || 'simotex'}`);
-    console.log(`🖥️  Host: ${process.env.DB_HOST || 'localhost'}`);
     connection.release();
   } catch (err) {
     console.error('❌ Database connection failed!');
-    console.error('📛 Error message:', err.message);
-    console.error('📛 Error code:', err.code);
+    console.error(err);
   }
-});
-
-process.on('unhandledRejection', (reason, promise) => {
-  console.error('💥 Unhandled Promise Rejection:', reason);
 });
