@@ -21,10 +21,11 @@ app.use(express.static(path.join(__dirname, '..')));
 
 // Database connection
 const pool = mysql.createPool({
-    host: 'sql110.infinityfree.com',
-    user: 'if0_40054476',
-    password: 'AhmedKaroui1995',
-    database: 'if0_40054476_simotex',
+    host: 'simotex-stage-eya.g.aivencloud.com',
+    user: 'avnadmin',
+    password: 'AVNS_h5G5lYlbYzSW_5kOTRs',
+    database: 'simotex',
+    port:16909,
     waitForConnections: true,
     connectionLimit: 10,
     queueLimit: 0
