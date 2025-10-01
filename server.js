@@ -13,7 +13,6 @@ const orderRoutes = require('./routes/controlOrders');
 const defectRoutes = require('./routes/defects');
 const productionLineRoutes = require('./routes/productionLines');
 import testRouter from "./routes/test.js";
-app.use("/api", testRouter);
 
 
 const app = express();
@@ -21,6 +20,7 @@ const app = express();
 app.use(cors());
 app.use(express.json());
 app.use(express.static(path.join(__dirname, '..')));
+app.use("/api", testRouter);
 
 // Database connection
 const pool = mysql.createPool({
