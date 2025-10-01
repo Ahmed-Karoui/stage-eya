@@ -12,6 +12,9 @@ const authRoutes = require('./routes/auth');
 const orderRoutes = require('./routes/controlOrders');
 const defectRoutes = require('./routes/defects');
 const productionLineRoutes = require('./routes/productionLines');
+import testRouter from "./routes/test.js";
+app.use("/api", testRouter);
+
 
 const app = express();
 // Middleware
