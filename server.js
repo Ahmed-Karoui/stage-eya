@@ -26,6 +26,7 @@ const pool = mysql.createPool({
     password: 'AVNS_h5G5lYlbYzSW_5kOTRs',
     database: 'simotex',
     port:16909,
+    ssl: { rejectUnauthorized: false },
     waitForConnections: true,
     connectionLimit: 10,
     queueLimit: 0
