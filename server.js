@@ -3,7 +3,7 @@ const cors = require('cors');
 const mysql = require('mysql2/promise');
 const path = require('path');
 require('dotenv').config();
-
+const pool = require('./db'); // uses the pool in db.js
 
 
 
@@ -20,50 +20,8 @@ const app = express();
 app.use(cors());
 app.use(express.json());
 app.use(express.static(path.join(__dirname, '..')));
-app.use("/api", testRouter);
-
-// Database connection
-const pool = mysql.createPool({
-    host: 'simotex-stage-eya.g.aivencloud.com',
-    user: 'avnadmin',
-    password: 'AVNS_h5G5lYlbYzSW_5kOTRs',
-    database: 'simotex',
-    port:16909,
-    ssl: { rejectUnauthorized: false },
-    waitForConnections: true,
-    connectionLimit: 10,
-    queueLimit: 0
-});
 
 
-// Test database connection
-pool.getConnection((err, connection) => {
-  if (err) {
-    console.error('❌ Database connection failed:', err.message);
-    console.error('Error code:', err.code);
-    process.exit(1); // Exit if database connection fails
-  }
-  
-  console.log('✅ Database connected successfully');
-  console.log(`📊 Connected to database: ${process.env.DB_NAME || 'simotex'}`);
-  console.log(`🖥️  Host: ${process.env.DB_HOST || 'localhost'}`);
-  
-  connection.release(); // Release the connection back to the pool
-});
-
-// Handle pool errors
-pool.on('error', (err) => {
-  console.error('❌ Unexpected database error:', err);
-  if (err.code === 'PROTOCOL_CONNECTION_LOST') {
-    console.error('Database connection was closed.');
-  }
-  if (err.code === 'ER_CON_COUNT_ERROR') {
-    console.error('Database has too many connections.');
-  }
-  if (err.code === 'ECONNREFUSED') {
-    console.error('Database connection was refused.');
-  }
-});
 
 // Make db available in routes
 app.use((req, res, next) => {
