@@ -1,7 +1,10 @@
-// /api/test-db.js or /routes/test.js
+// routes/test.js
+import express from "express";
 import mysql from "mysql2/promise";
 
-export default async function handler(req, res) {
+const router = express.Router();
+
+router.get("/test-db", async (req, res) => {
   try {
     const conn = await mysql.createConnection({
       host: process.env.DB_HOST,
@@ -9,15 +12,15 @@ export default async function handler(req, res) {
       user: process.env.DB_USER,
       password: process.env.DB_PASSWORD,
       database: process.env.DB_NAME,
-      ssl: { rejectUnauthorized: false } // important for Aiven
+      ssl: { rejectUnauthorized: false },
     });
-
     const [rows] = await conn.query("SELECT NOW()");
     await conn.end();
-
-    res.status(200).json({ success: true, time: rows[0] });
+    res.json({ success: true, time: rows[0] });
   } catch (err) {
-    console.error("DB Test Error:", err);
+    console.error(err);
     res.status(500).json({ success: false, message: err.message });
   }
-}
+});
+
+export default router;
